@@ -1,0 +1,76 @@
+<mat-card class="card" appearance="outlined">
+
+  <mat-card-header>
+
+    <form class="form" [formGroup]="climaForm">
+
+      <mat-grid-list cols="4" rowHeight="1:1">
+
+        <mat-grid-tile [colspan]="3">
+          <mat-form-field class="form-field">
+
+            <mat-label>Municipio</mat-label>
+
+            <input type="text"
+              placeholder="Pick one"
+              aria-label="Municipio"
+              matInput
+              formControlName="municipio"
+              [matAutocomplete]="auto">
+
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+              @for (filteredMunicipio of filteredMunicipios | async; track filteredMunicipio.id) {
+                <mat-option [value]="filteredMunicipio">{{filteredMunicipio.nombre}}</mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile [colspan]="1">
+          <mat-form-field>
+            <mat-select formControlName="unidad">
+              @for (unitTemperature of unitsTemperature; track unitTemperature.value) {
+                <mat-option [value]="unitTemperature.value">{{unitTemperature.viewValue}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </mat-grid-tile>
+
+      </mat-grid-list>
+
+    </form>
+
+  </mat-card-header>
+
+  @if (prediccion()) {
+
+    <mat-card-content>
+
+      <div>
+        <h1>{{climaForm.get('municipio')?.value?.nombre}}</h1>
+        <h4>{{getMananaDate() | date:'fullDate':'':'es-ES'}}</h4>
+      </div>
+
+      <mat-grid-list cols="2" rowHeight="2:1">
+        <mat-grid-tile class="media-temperature-value">
+          <div>{{prediccion()!.mediaTemperatura}}{{getUnitSymbol(prediccion()!.unidadTemperatura)}}</div>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          @if(getIconoTiempo()) {
+            <img [src]="getIconoTiempo()" alt="Precipitación">
+          }
+        </mat-grid-tile>
+      </mat-grid-list>
+
+      <p>Probabilidad de precipitación:</p>
+      <ul>
+        @for (prob of prediccion()!.probPrecipitacion; track prob.periodo) {
+          <li>{{prob.periodo}}h: {{prob.probabilidad}}%</li>
+        }
+      </ul>
+    </mat-card-content>
+  } @else if(cargandoPrediccion) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+</mat-card>
