@@ -43,7 +43,7 @@ export class PrediccionMunicipio implements OnInit {
   municipioSelected: Municipio | undefined;
 
   prediccion = signal<Prediccion | undefined>(undefined);
-  cargandoPrediccion: boolean = false;
+  cargandoPrediccion = signal<boolean>(false);
 
   unitsTemperature: UnitTemperature[] = [
     {value: 'c', viewValue: '°C'},
@@ -85,15 +85,15 @@ export class PrediccionMunicipio implements OnInit {
   }
 
   getPrediccionMananaMunicipio(municipioId: string): void {
-    this.cargandoPrediccion = true;
+    this.cargandoPrediccion.set(true);
     this.klimaSvc.getPrediccionMananaMunicipio(municipioId.replace(/^id/, ''), this.climaForm.get('unidad')?.value).subscribe({
       next: (prediccion: Prediccion) => {
         this.prediccion.set(prediccion);
-        this.cargandoPrediccion = false;
+        this.cargandoPrediccion.set(false);
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error message:', error.message, 'Status code:', error.status);
-
+        this.cargandoPrediccion.set(false);
         if (error.status === 429) {
           this.toastSvc.error('Error al obtener la prediccion. Por favor inténtelo dentro de un minuto', 'Error', {
             timeOut: 5000,
