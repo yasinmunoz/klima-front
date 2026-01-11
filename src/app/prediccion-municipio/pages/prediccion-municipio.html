@@ -53,7 +53,11 @@
 
       <mat-grid-list cols="2" rowHeight="2:1">
         <mat-grid-tile class="media-temperature-value">
-          <div>{{prediccion()!.mediaTemperatura}}{{getUnitSymbol(prediccion()!.unidadTemperatura)}}</div>
+          @if(prediccion()?.mediaTemperatura){
+            <div>{{prediccion()!.mediaTemperatura}}{{getUnitSymbol(prediccion()!.unidadTemperatura)}}</div>
+          } @else {
+            <div>N/A</div>
+          }
         </mat-grid-tile>
         <mat-grid-tile>
           @if(getIconoTiempo()) {
@@ -62,14 +66,19 @@
         </mat-grid-tile>
       </mat-grid-list>
 
-      <p>Probabilidad de precipitación:</p>
-      <ul>
-        @for (prob of prediccion()!.probPrecipitacion; track prob.periodo) {
-          <li>{{prob.periodo}}h: {{prob.probabilidad}}%</li>
-        }
-      </ul>
+      @if (prediccion()?.probPrecipitacion?.length) {
+        <p>Probabilidad de precipitación:</p>
+        <ul>
+          @for (prob of prediccion()!.probPrecipitacion; track prob.periodo) {
+            <li>{{prob.periodo}}h: {{prob.probabilidad}}%</li>
+          }
+        </ul>
+      } @else {
+        <p>Probabilidad de precipitación:</p>
+        <p>N/A: Datos temporalmente no disponibles</p>
+      }
     </mat-card-content>
-  } @else if(cargandoPrediccion) {
+  } @else if(cargandoPrediccion()) {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
 
