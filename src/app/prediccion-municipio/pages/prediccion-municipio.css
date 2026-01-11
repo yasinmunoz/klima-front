@@ -1,0 +1,17 @@
+.card {
+  max-width: 400px;
+  margin: 2rem auto;
+}
+
+.form {
+  width: 100%;
+}
+
+.form-field {
+  width: 100%;
+}
+
+.media-temperature-value{
+  font-size: 2.75rem;
+  font-weight: bold;
+}
